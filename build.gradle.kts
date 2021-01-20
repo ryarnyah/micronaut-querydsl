@@ -54,9 +54,9 @@ publishing {
             from(components["java"])
 
             pom {
-                name.set("Micronaut support for Requery")
+                name.set("Micronaut support for QueryDSL")
                 url.set("https://github.com/ryarnyah/${project.name}")
-                description.set("Micronaut support for Requery")
+                description.set("Micronaut support for QueryDSL")
 
                 licenses {
                     license {

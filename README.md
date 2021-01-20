@@ -1,12 +1,12 @@
 # Micronaut-QuerySQL
 
-Micronaut support for [QuerySQL](https://github.com/requery/requery)
+Micronaut support for [QuerySQL](https://github.com/querydsl/querydsl)
 
 ## HowTo To install
 ```kotlin
 dependencies {
     //...
-    implementation("com.github.ryarnyah:micronaut-querydsl:${micronautKotlinRequeryVersion}")
+    implementation("com.github.ryarnyah:micronaut-querydsl:${micronautQueryDslVersion}")
     //...
 }
 ```
