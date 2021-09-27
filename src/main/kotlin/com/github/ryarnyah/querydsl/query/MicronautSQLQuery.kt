@@ -10,7 +10,7 @@ import com.querydsl.sql.Configuration
 import io.micronaut.transaction.TransactionDefinition
 import java.sql.Connection
 import java.sql.ResultSet
-import javax.inject.Provider
+import java.util.function.Supplier
 
 class MicronautSQLQuery<T> : SQLQuery<T> {
     private val transactionManager: DataSourceTransactionManager
@@ -64,7 +64,7 @@ class MicronautSQLQuery<T> : SQLQuery<T> {
     }
 
     constructor(
-        connProvider: Provider<Connection?>?,
+        connProvider: Supplier<Connection?>?,
         configuration: Configuration?,
         transactionManager: DataSourceTransactionManager
     ) : super(connProvider, configuration) {
@@ -72,7 +72,7 @@ class MicronautSQLQuery<T> : SQLQuery<T> {
     }
 
     constructor(
-        connProvider: Provider<Connection?>?,
+        connProvider: Supplier<Connection?>?,
         configuration: Configuration?,
         metadata: QueryMetadata?,
         transactionManager: DataSourceTransactionManager

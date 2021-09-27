@@ -1,8 +1,8 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
-    id("org.jetbrains.kotlin.kapt") version "1.4.10"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.4.10"
-    id("io.micronaut.library") version "1.2.0"
+    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    id("org.jetbrains.kotlin.kapt") version "1.5.31"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.5.31"
+    id("io.micronaut.library") version "2.0.6"
     id("io.codearte.nexus-staging") version "0.22.0"
     id("maven-publish")
     id("signing")
@@ -12,7 +12,7 @@ version = getGitVersion()
 group = "com.github.ryarnyah"
 
 val kotlinVersion = project.properties["kotlinVersion"]
-val queryDslVersion = "4.4.0"
+val queryDslVersion = "5.0.0"
 
 repositories {
     mavenCentral()
@@ -30,7 +30,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     testImplementation("io.micronaut:micronaut-management")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("io.micronaut.test:micronaut-test-junit5:2.3.1")
+    testImplementation("io.micronaut.test:micronaut-test-junit5:3.0.2")
     testImplementation("io.micronaut.data:micronaut-data-jdbc")
     testImplementation("io.micronaut.sql:micronaut-jdbc-hikari")
     testRuntimeOnly("ch.qos.logback:logback-classic")
@@ -144,3 +144,19 @@ fun String.runCommand(workingDir: File = file("./")): String {
 
 inline val Project.isSnapshot
     get() = version.toString().endsWith("-SNAPSHOT")
+
+kotlin {
+    kotlinDaemonJvmArgs = listOf(
+        "-Dfile.encoding=UTF-8",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
+    )
+}
