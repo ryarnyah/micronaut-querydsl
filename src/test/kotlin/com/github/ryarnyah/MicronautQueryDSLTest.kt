@@ -10,9 +10,9 @@ import io.micronaut.context.env.MapPropertySource
 import io.micronaut.transaction.exceptions.NoTransactionException
 import io.micronaut.transaction.jdbc.DataSourceTransactionManager
 import io.micronaut.transaction.support.TransactionSynchronizationManager
+import jakarta.inject.Singleton
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import javax.inject.Singleton
 import javax.sql.DataSource
 import javax.transaction.Transactional
 

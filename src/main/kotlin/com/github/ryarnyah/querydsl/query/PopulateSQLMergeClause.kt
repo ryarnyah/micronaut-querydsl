@@ -1,6 +1,5 @@
 package com.github.ryarnyah.querydsl.query
 
-import com.infradna.tool.bridge_method_injector.WithBridgeMethods
 import com.querydsl.core.types.Path
 import com.querydsl.sql.Configuration
 import com.querydsl.sql.RelationalPath
@@ -9,7 +8,7 @@ import com.querydsl.sql.dml.DefaultMapper
 import com.querydsl.sql.dml.Mapper
 import com.querydsl.sql.dml.SQLMergeClause
 import java.sql.Connection
-import javax.inject.Provider
+import java.util.function.Supplier
 
 class PopulateSQLMergeClause : SQLMergeClause {
     constructor(connection: Connection?, templates: SQLTemplates?, entity: RelationalPath<*>?) : super(
@@ -24,13 +23,12 @@ class PopulateSQLMergeClause : SQLMergeClause {
         entity
     )
 
-    constructor(connection: Provider<Connection?>?, configuration: Configuration?, entity: RelationalPath<*>?) : super(
+    constructor(connection: Supplier<Connection?>?, configuration: Configuration?, entity: RelationalPath<*>?) : super(
         connection,
         configuration,
         entity
     )
 
-    @WithBridgeMethods(value = [SQLMergeClause::class], castRequired = true)
     fun populate(bean: Any): SQLMergeClause {
         return populate(bean, DefaultMapper.DEFAULT)
     }
@@ -42,7 +40,6 @@ class PopulateSQLMergeClause : SQLMergeClause {
      * @param mapper mapper to use
      * @return the current object
      */
-    @WithBridgeMethods(value = [SQLMergeClause::class], castRequired = true)
     fun <T> populate(obj: T, mapper: Mapper<T>): SQLMergeClause {
         val values = mapper.createMap(entity, obj)
         for ((key, value) in values) {

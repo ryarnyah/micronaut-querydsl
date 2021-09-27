@@ -4,8 +4,7 @@ package com.github.ryarnyah;
 import com.github.ryarnyah.querydsl.QTestData;
 import com.github.ryarnyah.querydsl.TestData;
 import com.github.ryarnyah.querydsl.configuration.MicronautSQLQueryFactory;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class TestServiceJava {
