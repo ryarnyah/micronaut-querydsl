@@ -1,6 +1,6 @@
 package com.github.ryarnyah.querydsl;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * MyTest is a Querydsl bean type

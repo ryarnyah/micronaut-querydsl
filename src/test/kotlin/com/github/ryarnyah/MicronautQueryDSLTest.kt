@@ -7,14 +7,14 @@ import com.github.ryarnyah.querydsl.TestData
 import com.github.ryarnyah.querydsl.configuration.MicronautSQLQueryFactory
 import io.micronaut.context.DefaultApplicationContext
 import io.micronaut.context.env.MapPropertySource
-import io.micronaut.transaction.exceptions.NoTransactionException
+import io.micronaut.data.connection.exceptions.NoConnectionException
+import io.micronaut.transaction.TransactionOperations
 import io.micronaut.transaction.jdbc.DataSourceTransactionManager
-import io.micronaut.transaction.support.TransactionSynchronizationManager
 import jakarta.inject.Singleton
+import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import javax.sql.DataSource
-import javax.transaction.Transactional
 
 class MicronautQueryDSLTest {
 
@@ -89,6 +89,10 @@ class MicronautQueryDSLTest {
         )
         applicationContext.start()
 
+        val tx = applicationContext.getBean(
+            TransactionOperations::class.java
+        )
+
         try {
             Assertions.assertTrue(applicationContext.containsBean(DataSource::class.java))
             Assertions.assertTrue(applicationContext.containsBean(DataSourceTransactionManager::class.java))
@@ -111,7 +115,7 @@ class MicronautQueryDSLTest {
             val testServiceJava = applicationContext.getBean(TestServiceJava::class.java)
             Assertions.assertNotNull(testServiceJava.findById("Hello World"))
 
-            Assertions.assertFalse(TransactionSynchronizationManager.isActualTransactionActive())
+            Assertions.assertFalse(tx.findTransactionStatus().isPresent)
         } finally {
             applicationContext.stop()
         }
@@ -131,6 +135,9 @@ class MicronautQueryDSLTest {
             )
         )
         applicationContext.start()
+        val tx = applicationContext.getBean(
+            TransactionOperations::class.java
+        )
 
         try {
             Assertions.assertTrue(applicationContext.containsBean(DataSource::class.java))
@@ -153,7 +160,7 @@ class MicronautQueryDSLTest {
                 testService.saveWithException(buildTestData("test"))
             }
             Assertions.assertNull(testService.findById("test"))
-            Assertions.assertFalse(TransactionSynchronizationManager.isActualTransactionActive())
+            Assertions.assertFalse(tx.findTransactionStatus().isPresent)
         } finally {
             applicationContext.stop()
         }
@@ -173,6 +180,9 @@ class MicronautQueryDSLTest {
             )
         )
         applicationContext.start()
+        val tx = applicationContext.getBean(
+            TransactionOperations::class.java
+        )
 
         try {
             Assertions.assertTrue(applicationContext.containsBean(DataSource::class.java))
@@ -197,7 +207,7 @@ class MicronautQueryDSLTest {
             entities.forEach { expected ->
                 Assertions.assertNotNull(resultEntities.find { it.uid == expected.uid })
             }
-            Assertions.assertFalse(TransactionSynchronizationManager.isActualTransactionActive())
+            Assertions.assertFalse(tx.findTransactionStatus().isPresent)
         } finally {
             applicationContext.stop()
         }
@@ -217,6 +227,9 @@ class MicronautQueryDSLTest {
             )
         )
         applicationContext.start()
+        val tx = applicationContext.getBean(
+            TransactionOperations::class.java
+        )
 
         try {
             Assertions.assertTrue(applicationContext.containsBean(DataSource::class.java))
@@ -244,7 +257,7 @@ class MicronautQueryDSLTest {
             entities.forEach { expected ->
                 Assertions.assertNotNull(resultEntities.find { it.uid == expected.uid })
             }
-            Assertions.assertFalse(TransactionSynchronizationManager.isActualTransactionActive())
+            Assertions.assertFalse(tx.findTransactionStatus().isPresent)
         } finally {
             applicationContext.stop()
         }
@@ -264,6 +277,9 @@ class MicronautQueryDSLTest {
             )
         )
         applicationContext.start()
+        val tx = applicationContext.getBean(
+            TransactionOperations::class.java
+        )
 
         try {
             Assertions.assertTrue(applicationContext.containsBean(DataSource::class.java))
@@ -283,11 +299,11 @@ class MicronautQueryDSLTest {
             val testService = applicationContext.getBean(TestService::class.java)
 
             Assertions.assertNull(testService.findById("Hello World"))
-            Assertions.assertThrows(NoTransactionException::class.java) {
+            Assertions.assertThrows(NoConnectionException::class.java) {
                 testService.saveWithoutTransaction(buildTestData("Hello World"))
             }
             Assertions.assertNull(testService.findById("Hello World"))
-            Assertions.assertFalse(TransactionSynchronizationManager.isActualTransactionActive())
+            Assertions.assertFalse(tx.findTransactionStatus().isPresent)
         } finally {
             applicationContext.stop()
         }
@@ -307,6 +323,9 @@ class MicronautQueryDSLTest {
             )
         )
         applicationContext.start()
+        val tx = applicationContext.getBean(
+            TransactionOperations::class.java
+        )
 
         try {
             Assertions.assertTrue(applicationContext.containsBean(DataSource::class.java))
@@ -329,14 +348,14 @@ class MicronautQueryDSLTest {
             department.id = 1
             department.name = "test"
             testService.saveDepartment(department)
-            Assertions.assertEquals(testService.findDepartmentById(1).name, "test")
+            Assertions.assertEquals(testService.findDepartmentById(1)?.name, "test")
 
             department.name = "toto"
             testService.saveDepartment(department)
-            Assertions.assertEquals(testService.findDepartmentById(1).name, "toto")
+            Assertions.assertEquals(testService.findDepartmentById(1)?.name, "toto")
 
             Assertions.assertEquals(testService.countDepartementById(1), 1)
-            Assertions.assertFalse(TransactionSynchronizationManager.isActualTransactionActive())
+            Assertions.assertFalse(tx.findTransactionStatus().isPresent)
         } finally {
             applicationContext.stop()
         }
@@ -354,7 +373,7 @@ open class TestService(
     private val sqlQueryFactory: MicronautSQLQueryFactory
 ) {
 
-    open fun countDepartementById(id: Long): Long {
+    open fun countDepartementById(id: Long): Long? {
         return sqlQueryFactory.select(QDepartment.department.id.count())
             .from(QDepartment.department)
             .where(QDepartment.department.id.eq(id))
@@ -362,7 +381,7 @@ open class TestService(
     }
 
 
-    open fun findDepartmentById(id: Long): Department {
+    open fun findDepartmentById(id: Long): Department? {
         return sqlQueryFactory.selectFrom(QDepartment.department)
             .where(QDepartment.department.id.eq(id))
             .fetchFirst()

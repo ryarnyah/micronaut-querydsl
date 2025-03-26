@@ -1,6 +1,6 @@
 package com.github.ryarnyah.querydsl;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * Employee is a Querydsl bean type

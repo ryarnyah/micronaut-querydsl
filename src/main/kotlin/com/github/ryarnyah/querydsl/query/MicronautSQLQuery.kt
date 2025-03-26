@@ -93,7 +93,7 @@ class MicronautSQLQuery<T> : SQLQuery<T> {
         return transactionManager.executeRead { super.fetchResults() }
     }
 
-    override fun fetchOne(): T {
+    override fun fetchOne(): T? {
         return transactionManager.executeRead { super.fetchOne() }
     }
 

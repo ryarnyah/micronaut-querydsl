@@ -5,7 +5,7 @@ import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.sql.ColumnMetadata;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 import java.sql.Types;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
